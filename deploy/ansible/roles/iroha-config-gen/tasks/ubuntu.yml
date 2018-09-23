@@ -1,0 +1,16 @@
+---
+# tasks file for iroha-standalone-config-gen
+- name: create peers.csv file
+  template:
+    src: peers.list.j2
+    dest: "{{ playbook_dir }}/scripts/peers.csv"
+
+- name: generate keys for peers
+  command: "python3 {{ playbook_dir }}/scripts/generate-peers-keys.py --file {{ playbook_dir }}/scripts/peers.csv"
+    args:
+      chdir: "{{ playbook_dir }}/../../roles/iroha-config-gen/files"
+
+- name: Generate node key files 
+  command: "python3 {{ playbook_dir }}/scripts/genesis-add-peers.py make_key_files {{ playbook_dir }}/scripts/peers.csv"
+  args:
+    chdir: "{{ playbook_dir }}/../../roles/iroha-config-gen/files"
