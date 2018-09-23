@@ -16,28 +16,25 @@ class Peer:
 def generate_keypair():
     gen_keys = subprocess.check_output(["./ed25519-cli", "keygen"]).decode('UTF-8').split('\n')
     keys = []
-    for i in gen_keys:
-        keys.append(i.split(':')[1])
+    keys.append(gen_keys[0].split(':')[1].replace(' ', ''))
+    keys.append(gen_keys[1].split(':')[1].replace(' ', ''))
     return keys
-
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("file",
-                        "-f", "--file",
-                        help="pass file path to the peers.csv file",
-                        action="store_true")
+                        help="pass file path to the peers.csv file")
     args = parser.parse_args()
 
     peers = []
     with open(args.file) as peers_file:
         peersreader = csv.reader(peers_file, delimiter=';')
-        next(peersreader, None)  # skip the header
         for peer in peersreader:
             keys = generate_keypair()
-            peers.append(";".join(peer, keys))
+            peers.append(";".join((peer[0], peer[1], keys[0], keys[1])) + '\n')
 
     with open(args.file, 'w') as peers_file:
+        peers_file.write("host;port;priv_key_b64_encoded;pub_key_b64_encoded\n")
         peers_file.writelines(peers)
 
 
