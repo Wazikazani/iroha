@@ -13,10 +13,11 @@
 - name: Generate node key files 
   command: "python3 {{ playbook_dir }}/scripts/genesis-add-peers.py make_key_files {{ playbook_dir }}/scripts/peers.csv"
   args:
-    chdir: "{{ role_path }}/files"
+    chdir: "{{ playbook_dir }}/files"
 
-- name: Make genesis block file
-  command:
-    python3 {{ playbook_dir }}/scripts/genesis-add-peers.py add_iroha_peers {{ playbook_dir }}/scripts/peers.csv genesis.block
-  args:
-    chdir: "{{ role_path }}/files"
+# TODO: find default genesis.block
+# - name: Make genesis block file
+#   command:
+#     python3 {{ playbook_dir }}/scripts/genesis-add-peers.py add_iroha_peers {{ playbook_dir }}/scripts/peers.csv genesis.block
+#   args:
+#     chdir: "{{ playbook_dir }}/files"

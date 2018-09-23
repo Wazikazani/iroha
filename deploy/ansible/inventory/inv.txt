@@ -1,0 +1,2 @@
+[iroha-west]
+localhost ansible_user=root key=0

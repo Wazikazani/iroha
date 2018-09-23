@@ -1,4 +1,3 @@
-host;port;priv_key_b64_encoded;pub_key_b64_encoded
 {% for host in groups['all'] | difference([inventory_hostname]) | sort(reverse=False) %}
 {% for i in range(0, hostvars[host].nodes_in_region) %}
 {{ hostvars[host].ansible_host }};{{ hostvars[host].internal_port + i | int }}
