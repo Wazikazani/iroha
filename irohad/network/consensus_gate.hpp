@@ -8,7 +8,6 @@
 
 #include <rxcpp/rx.hpp>
 
-#include "consensus/yac/yac_hash_provider.hpp"
 #include "ordering/on_demand_os_transport.hpp"
 
 namespace shared_model {
@@ -27,7 +26,7 @@ namespace iroha {
 
     /// Network votes for another pair and round
     struct VoteOther {
-      consensus::yac::YacHash hash;
+      std::shared_ptr<shared_model::interface::Block> block_;
     };
 
     /// Reject on proposal
@@ -35,7 +34,7 @@ namespace iroha {
 
     /// Reject on block
     struct BlockReject {
-      consensus::yac::YacHash hash;
+      std::shared_ptr<shared_model::interface::Block> block_;
     };
 
     /// Agreement on <None, None>

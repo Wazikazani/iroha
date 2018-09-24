@@ -59,8 +59,8 @@ namespace iroha {
           Round round) {
         current_block_ = std::move(block);
 
-        current_hash_ = hash_provider_->makeHash(*current_block_, *proposal);
-        current_hash_.round = std::move(round);
+        current_hash_ =
+            hash_provider_->makeHash(*current_block_, *proposal, round);
         log_->info("vote for (proposal: {}, block: {})",
                    current_hash_.proposal_hash,
                    current_hash_.block_hash);
@@ -95,14 +95,9 @@ namespace iroha {
       rxcpp::observable<YacGateImpl::GateObject> YacGateImpl::handleCommit(
           const CommitMessage &msg) {
         return rxcpp::observable<>::create<GateObject>([&](auto subscriber) {
-          const auto hash = getHash(msg.votes);
-          if (not hash) {
-            log_->info("Invalid commit message, hashes are different");
-            subscriber.on_completed();
-            return;
-          }
+          const auto hash = getHash(msg.votes).value();
           // if node has voted for the committed block
-          if (hash.value() == current_hash_) {
+          if (hash == current_hash_) {
             // append signatures of other nodes
             this->copySignatures(msg);
             log_->info("consensus: commit top block: height {}, hash {}",
@@ -114,7 +109,7 @@ namespace iroha {
           }
 
           log_->info("Voted for another block, waiting for sync");
-          subscriber.on_next(network::VoteOther{hash.value()});
+          subscriber.on_next(network::VoteOther{current_block_});
           subscriber.on_completed();
         });
       }
@@ -131,7 +126,7 @@ namespace iroha {
             return;
           }
           log_->info("Block reject since proposal hashes match");
-          subscriber.on_next(network::BlockReject{hash.value()});
+          subscriber.on_next(network::BlockReject{current_block_});
           subscriber.on_completed();
         });
       }

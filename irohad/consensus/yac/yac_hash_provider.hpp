@@ -42,9 +42,6 @@ namespace iroha {
          */
         std::string block_hash;
 
-        /// Consensus round
-        ordering::transport::Round round;
-
         /**
          * Peer signature of block
          */
@@ -72,7 +69,8 @@ namespace iroha {
          */
         virtual YacHash makeHash(
             const shared_model::interface::Block &block,
-            const shared_model::interface::Proposal &proposal) const = 0;
+            const shared_model::interface::Proposal &proposal,
+            ordering::transport::Round round) const = 0;
 
         /**
          * Convert YacHash to model hash

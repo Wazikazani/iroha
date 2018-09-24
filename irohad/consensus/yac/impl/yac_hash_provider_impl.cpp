@@ -13,9 +13,10 @@ namespace iroha {
 
       YacHash YacHashProviderImpl::makeHash(
           const shared_model::interface::Block &block,
-          const shared_model::interface::Proposal &proposal) const {
+          const shared_model::interface::Proposal &proposal,
+          ordering::transport::Round round) const {
         YacHash result;
-        result.proposal_hash = proposal.hash().hex();
+        result.proposal_hash = block.hash().hex();
         result.block_hash = block.hash().hex();
         result.block_signature = clone(block.signatures().front());
         return result;
