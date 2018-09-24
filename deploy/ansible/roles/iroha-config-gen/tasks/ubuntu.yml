@@ -15,9 +15,8 @@
   args:
     chdir: "{{ playbook_dir }}/files"
 
-# TODO: find default genesis.block
-# - name: Make genesis block file
-#   command:
-#     python3 {{ playbook_dir }}/scripts/genesis-add-peers.py add_iroha_peers {{ playbook_dir }}/scripts/peers.csv genesis.block
-#   args:
-#     chdir: "{{ playbook_dir }}/files"
+- name: Make genesis block file
+  command:
+    python3 {{ playbook_dir }}/scripts/genesis-add-peers.py add_iroha_peers {{ playbook_dir }}/scripts/peers.csv {{ role_path }}/files/genesis.block
+  args:
+    chdir: "{{ playbook_dir }}/files"

@@ -1,2 +1,2 @@
 [iroha-west]
-localhost ansible_user=root key=0
+iroha-bench1 ansible_host=0.0.0.0 ansible_user=root key=0
