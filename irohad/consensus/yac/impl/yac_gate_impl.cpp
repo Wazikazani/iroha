@@ -96,20 +96,22 @@ namespace iroha {
           const CommitMessage &msg) {
         return rxcpp::observable<>::create<GateObject>([&](auto subscriber) {
           const auto hash = getHash(msg.votes).value();
-          // if node has voted for the committed block
-          if (hash == current_hash_) {
+          if (hash.proposal_hash.size() == 0) {
+            // if consensus agreed on nothing for commit
+            log_->debug("Consensus skipped round, voted for nothing");
+            subscriber.on_next(network::AgreementOnNone{});
+          } else if (hash == current_hash_) {
+            // if node has voted for the committed block
             // append signatures of other nodes
             this->copySignatures(msg);
             log_->info("consensus: commit top block: height {}, hash {}",
                        current_block_->height(),
                        current_block_->hash().hex());
             subscriber.on_next(network::PairValid{current_block_});
-            subscriber.on_completed();
-            return;
+          } else {
+            log_->info("Voted for another block, waiting for sync");
+            subscriber.on_next(network::VoteOther{current_block_});
           }
-
-          log_->info("Voted for another block, waiting for sync");
-          subscriber.on_next(network::VoteOther{current_block_});
           subscriber.on_completed();
         });
       }
@@ -117,7 +119,6 @@ namespace iroha {
       rxcpp::observable<YacGateImpl::GateObject> YacGateImpl::handleReject(
           const RejectMessage &msg) {
         return rxcpp::observable<>::create<GateObject>([&](auto subscriber) {
-          // fixme
           const auto hash = getHash(msg.votes);
           if (not hash) {
             log_->info("Proposal reject since all hashes are different");
