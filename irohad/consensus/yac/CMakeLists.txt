@@ -43,5 +43,4 @@ target_link_libraries(yac
     yac_grpc
     logger
     hash
-    shared_model_proto_backend
     )

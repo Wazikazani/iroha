@@ -5,9 +5,6 @@
 
 #include "consensus/yac/impl/yac_gate_impl.hpp"
 
-#include "backend/protobuf/block.hpp"
-#include "backend/protobuf/proposal.hpp"
-#include "backend/protobuf/proto_proposal_factory.hpp"
 #include "common/visitor.hpp"
 #include "consensus/yac/cluster_order.hpp"
 #include "consensus/yac/messages.hpp"
@@ -42,14 +39,7 @@ namespace iroha {
         block_creator_->on_block().subscribe([this](auto block) {
           // TODO(@l4l) 24/09/18 IR-1717
           // update BlockCreator iface according to YacGate
-          this->vote(
-              std::shared_ptr<shared_model::interface::Proposal>(
-                  (shared_model::proto::ProtoProposalFactory<
-                       shared_model::validation::DefaultProposalValidator>()
-                       .unsafeCreateProposal(0, 0, {}))
-                      .release()),
-              block,
-              {0, 0});
+          this->vote(nullptr, block, {0, 0});
         });
       }
 
